@@ -1,0 +1,63 @@
+- hosts: localhost
+  ignore_errors: no
+  vars:
+          - cont_name: "py-launched cont"
+
+  tasks:
+  - name: copying docker repository..........
+    copy:
+          src: "docker.repo"
+          dest: "/etc/yum.repos.d/docker.repo"
+    notify: docker
+  - name: flushing handlers .............
+    meta: flush_handlers
+
+
+  - name: starting docker service.............
+    block:
+            - service:
+                    name: docker
+                    state: started
+                    enabled: yes
+    rescue:
+            - debug:
+                     msg: "service already started........."
+
+  - name: installing docker module
+    block:
+       - command: pip3 show docker
+     
+    rescue:
+       - pip:
+          name: docker-py
+   
+  - name: stopping selinux
+    selinux:
+            policy: targeted
+            state: permissive
+ 
+  - name: pulling docker image ....................       
+    docker_image:
+           name: "centos:latest"
+           source: pull
+
+  - name: launching a container
+    docker_container:
+          name: py_lauched_cont
+          image: "centos:latest"
+          interactive: yes
+          detach: yes
+          tty: yes
+
+  
+  handlers:
+  - name: docker
+    yum:
+            name: docker-ce
+            state: present
+            allow_downgrade: yes
+            skip_broken: yes
+
+  
+      
+

@@ -1,0 +1,15 @@
+- hosts: localhost
+  tasks:
+  - name: installing httpd service......
+    yum:
+            name: httpd
+            state: present
+          
+  - name: starting the httpd service 
+    service:
+            name: httpd
+            state: started
+            enabled: yes
+            
+       
+

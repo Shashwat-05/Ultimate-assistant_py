@@ -1,0 +1,27 @@
+- hosts: localhost
+  tasks:
+          - file:
+                  state: directory
+                  path: "/dvd"
+      
+          - mount:
+                  src: "/dev/cdrom"
+                  path: "/dvd"
+                  state: mounted
+                  fstype: "iso9660"
+          
+          - yum_repository:
+                  baseurl: "/dvd/AppStream"
+                  gpgcheck: no
+                  name: "ansible_repo1"
+                  description: "this is dvd1 repo"
+                  file : "ansible_yum"
+
+          - yum_repository:
+                  baseurl: "/dvd/BaseOS"
+                  gpgcheck: no
+                  name: "ansible_repo2"
+                  description: "this is dvd2 repo"
+                  file : "ansible_yum"
+
+    
